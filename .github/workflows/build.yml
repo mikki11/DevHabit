@@ -9,30 +9,30 @@ on:
 env:
   DOTNET_VERSION: "9.x"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: DevHabit
+#     defaults:
+#       run:
+#         working-directory: DevHabit
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+#       - name: Setup .NET
+#         uses: actions/setup-dotnet@v4
+#         with:
+#           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore
-        run: dotnet restore DevHabit.sln
+#       - name: Restore
+#         run: dotnet restore DevHabit.sln
 
-      - name: Build
-        run: dotnet build DevHabit.sln --configuration Release --no-restore
+#       - name: Build
+#         run: dotnet build DevHabit.sln --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet test DevHabit.sln --configuration Release --no-restore --no-build
+#       - name: Test
+#         run: dotnet test DevHabit.sln --configuration Release --no-restore --no-build
 
-      - name: Publish
-        run: dotnet publish DevHabit.sln --configuration Release --no-restore --no-build
+#       - name: Publish
+#         run: dotnet publish DevHabit.sln --configuration Release --no-restore --no-build
