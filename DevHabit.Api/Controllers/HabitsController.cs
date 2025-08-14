@@ -30,12 +30,13 @@ public class HabitsController(ApplicationDbContext dbContext) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<HabitDto>> GetHabit(string id)
+    public async Task<ActionResult<HabitWithTagsDto>> GetHabitWithTags(string id)
     {
-        HabitDto? habit = await dbContext
+        HabitWithTagsDto? habit = await dbContext
             .Habits
+            //.Include(h => h.Tags)
             .Where(h => h.Id == id)
-            .Select(HabitQueries.ProjectToDto())
+            .Select(HabitQueries.ProjectToDtoWithTags())
             .FirstOrDefaultAsync();
 
         if (habit is null)
@@ -58,7 +59,7 @@ public class HabitsController(ApplicationDbContext dbContext) : ControllerBase
 
         HabitDto habitDto = habit.ToDto();
 
-        return CreatedAtAction(nameof(GetHabit), new { id = habitDto.Id }, habitDto);
+        return CreatedAtAction(nameof(GetHabitWithTags), new { id = habitDto.Id }, habitDto);
     }
 
     [HttpPut("{id}")]
@@ -78,6 +79,18 @@ public class HabitsController(ApplicationDbContext dbContext) : ControllerBase
 
         return NoContent();
     }
+
+    //[HttpPut("{id}/tags/{tagId}")]
+    //public async Task<ActionResult> AddTagToHabit(string id, UpdateHabitDto updateHabitDto)
+    //{
+    //    return Ok();
+    //}
+
+    //[HttpDelete("{id}/tags/{tagId}")]
+    //public async Task<ActionResult> RemoveTagFromHabit(string id, UpdateHabitDto updateHabitDto)
+    //{
+    //    return Ok();
+    //}
 
     [HttpPatch("{id}")]
     public async Task<ActionResult> PatchHabit(string id, JsonPatchDocument<HabitDto> patchDocument)
