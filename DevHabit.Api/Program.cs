@@ -1,5 +1,6 @@
 using DevHabit.Api.Database;
 using DevHabit.Api.Extensions;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql;
@@ -16,6 +17,27 @@ builder.Services.AddControllers(options =>
 })
 .AddNewtonsoftJson()
 .AddXmlSerializerFormatters();
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("DevelopmentPolicy", policy =>
+//    {
+//        policy.AllowAnyOrigin()
+//              .AllowAnyHeader()
+//              .AllowAnyMethod();
+//    });
+//});
+
+
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+    };
+});
 
 builder.Services.AddOpenApi();
 
@@ -47,14 +69,18 @@ builder.Logging.AddOpenTelemetry(options =>
 
 WebApplication app = builder.Build();
 
+
+
+app.UseHttpsRedirection();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 
     await app.ApplyMigrationsAsync();
+    //app.UseCors("DevelopmentPolicy");
+    //app.MapScalarApiReference();
 }
-
-app.UseHttpsRedirection();
 
 app.MapControllers();
 
