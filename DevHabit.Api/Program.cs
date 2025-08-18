@@ -9,6 +9,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +74,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
     await app.ApplyMigrationsAsync();
-    //app.MapScalarApiReference();
+    app.MapScalarApiReference();
 }
 
 app.UseExceptionHandler();
