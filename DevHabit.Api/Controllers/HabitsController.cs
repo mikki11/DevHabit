@@ -2,7 +2,6 @@
 using DevHabit.Api.DTOs.Habits;
 using DevHabit.Api.Entities;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -54,12 +53,14 @@ public class HabitsController(ApplicationDbContext dbContext) : ControllerBase
         CreateHabitDto createHabitDto,
         IValidator<CreateHabitDto> validator)
     {
-        ValidationResult validationResult = await validator.ValidateAsync(createHabitDto);
+        //ValidationResult validationResult = await validator.ValidateAsync(createHabitDto);
 
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.ToDictionary());
-        }
+        //if (!validationResult.IsValid)
+        //{
+        //    return BadRequest(validationResult.ToDictionary());
+        //}
+
+        await validator.ValidateAndThrowAsync(createHabitDto);
 
         Habit habit = createHabitDto.ToEntity();
 
@@ -90,18 +91,6 @@ public class HabitsController(ApplicationDbContext dbContext) : ControllerBase
         return NoContent();
     }
 
-    //[HttpPut("{id}/tags/{tagId}")]
-    //public async Task<ActionResult> AddTagToHabit(string id, UpdateHabitDto updateHabitDto)
-    //{
-    //    return Ok();
-    //}
-
-    //[HttpDelete("{id}/tags/{tagId}")]
-    //public async Task<ActionResult> RemoveTagFromHabit(string id, UpdateHabitDto updateHabitDto)
-    //{
-    //    return Ok();
-    //}
-
     [HttpPatch("{id}")]
     public async Task<ActionResult> PatchHabit(string id, JsonPatchDocument<HabitDto> patchDocument)
     {
@@ -116,11 +105,8 @@ public class HabitsController(ApplicationDbContext dbContext) : ControllerBase
 
         patchDocument.ApplyTo(habitDto, ModelState);
 
-        //if (!ModelState.IsValid)
         if (!TryValidateModel(habitDto))
         {
-            //return BadRequest(ModelState);
-            //return ValidationProblem(ModelState);
             return ValidationProblem(ModelState);
         }
 
